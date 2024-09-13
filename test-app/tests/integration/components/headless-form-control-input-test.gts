@@ -1,6 +1,6 @@
 /* eslint-disable no-undef -- Until https://github.com/ember-cli/eslint-plugin-ember/issues/1747 is resolved... */
 
-import { render, setupOnerror } from '@ember/test-helpers';
+import { render, setupOnerror, typeIn } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 
 import { HeadlessForm } from 'ember-headless-form';
@@ -66,6 +66,24 @@ module('Integration Component HeadlessForm > Input', function (hooks) {
       assert.dom('input').hasAttribute('type', type, `supports type=${type}`);
     }
   });
+
+    test('number type input accepts values', async function (assert) {
+    const data = { firstName: 'Simon' };
+
+      await render(<template>
+        <HeadlessForm @data={{data}} as |form|>
+          <form.Field @name="firstName" as |field|>
+            <field.Input @type="number" step="0.01" />
+          </form.Field>
+        </HeadlessForm>
+      </template>);
+
+      await typeIn('input', '12')
+      assert.dom('input').hasValue('12', 'has the correct value');
+      await typeIn('input', '1.02')
+      assert.dom('input').hasValue('1.02', 'accepts has the correct value');
+  });
+
 
   ['checkbox', 'radio'].forEach((type) =>
     test(`input throws for ${type} type handled by dedicated component`, async function (assert) {
