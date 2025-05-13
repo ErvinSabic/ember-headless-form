@@ -106,27 +106,20 @@ export default class HeadlessFormControlInputComponent extends Component<Headles
   handleInput(e: Event | InputEvent): void {
     assert('Expected HTMLInputElement', e.target instanceof HTMLInputElement);
 
-    if(this.args.type === "number"){
+    if (this.args.type === "number") {
       const valueAsNumber = parseFloat(e.target.value);
 
-      if(valueAsNumber !== this.args.value && !isNaN(valueAsNumber)){
+      if (valueAsNumber !== this.args.value && !isNaN(valueAsNumber)) {
         this.args.setValue(valueAsNumber);
       }
       // This is here to avoid setting the value as NaN, instead using Zero.
-      else if(e.target.value === "" || isNaN(valueAsNumber)){
+      else if (e.target.value === "" || isNaN(valueAsNumber)) {
         this.args.setValue(0);
       }
 
     }else {
       this.args.setValue(e.target.value);
     }
-  }
-
-  @action
-  handleFocusOut(e: Event | InputEvent): void {
-    assert('Expected HTMLInputElement', e.target instanceof HTMLInputElement);
-
-
   }
 
   <template>
@@ -139,7 +132,6 @@ export default class HeadlessFormControlInputComponent extends Component<Headles
       aria-describedby={{if @invalid @errorId}}
       ...attributes
       {{on "input" this.handleInput}}
-      {{!-- {{on "focusout" this.handleFocusOut}} --}}
     />
   </template>
 }

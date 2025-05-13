@@ -1,6 +1,6 @@
 /* eslint-disable no-undef -- Until https://github.com/ember-cli/eslint-plugin-ember/issues/1747 is resolved... */
 
-import { render, setupOnerror, typeIn } from '@ember/test-helpers';
+import { fillIn, render, setupOnerror } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 
 import { HeadlessForm } from 'ember-headless-form';
@@ -67,21 +67,26 @@ module('Integration Component HeadlessForm > Input', function (hooks) {
     }
   });
 
-    test('number type input accepts values', async function (assert) {
-    const data = { firstName: 'Simon' };
+  test('number type input accepts values', async function (assert) {
+      const data = { amount: 0 };
 
       await render(<template>
         <HeadlessForm @data={{data}} as |form|>
-          <form.Field @name="firstName" as |field|>
+          <form.Field @name="amount" as |field|>
             <field.Input @type="number" step="0.01" />
           </form.Field>
         </HeadlessForm>
       </template>);
 
-      await typeIn('input', '12')
-      assert.dom('input').hasValue('12', 'has the correct value');
-      await typeIn('input', '1.02')
-      assert.dom('input').hasValue('1.02', 'accepts has the correct value');
+      /* We are using fillIn here instead of typeIn because typeIn seems to struggle with number inputs that have decimals.
+      *   @see https://github.com/emberjs/ember-test-helpers/issues/1546
+      */
+      await fillIn('input', '12')
+      assert.dom("input").hasValue('12', 'allows non-decimal values');
+      await fillIn('input', '1.03');
+      assert.dom("input").hasValue('1.03', 'allows decimal values');
+      await fillIn('input', 'ThisShouldNotWork');
+      assert.dom("input").hasValue('0', 'does not allow non-numeric values');
   });
 
 
