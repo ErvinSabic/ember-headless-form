@@ -300,14 +300,15 @@ export default class HeadlessFormFieldComponent<
     return this.value ?? [];
   }
 
-  get valueAsStringOrNumber(): string | number | undefined {
+  get valueAsStringOrNumber(): string | number | undefined | null {
     assert(
       `Only string or number values are expected for ${String(
         this.args.name
       )}, but you passed ${typeof this.value}`,
       typeof this.value === 'undefined' ||
         typeof this.value === 'string' ||
-        typeof this.value === 'number'
+        typeof this.value === 'number' ||
+        this.value === null
     );
 
     return this.value;
